@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+
+<body calss="bg-light">
+<div class="container">
+    <form method="post" action="{% url 'create1' %}" name="form1">{% csrf_token %}
+
+        <!--header-->
+        <div class="py-5 text-center">
+            <img class="d-block mx-auto mb-4" src="mainlogo.png" alt="" width="72" height="72">(로고)
+            <h2>HOSTING</h2>
+        </div>
+
+        <!--body-->
+        <div class="item">
+        <div class="col-md-8 order-md-1">
+
+            <h4 class="mb-3"><div class="title">방 주소</div></h4> 
+            <input type="text" id="address" placeholder="주소">
+            <input type="text" id="detailAddress" placeholder="상세주소">
+            <input type="hidden" id="addr_gu">
+            <input type="hidden" id="addr_dong">
+            <input type="button" onclick="execDaumPostcode()" value="주소 검색"><br>
+            
+            <div id="map" style="width:100%;height:300px;margin-top:10px;display:none"></div>
+           
+            <script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
+            <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a57b1cb48648dd46f2266745673f91b3&libraries=services"></script>
+            <script>
+            var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+                mapOption = {
+                    center: new daum.maps.LatLng(37.537187, 127.005476), // 지도의 중심좌표
+                    level: 5 // 지도의 확대 레벨
+                };
+
+            //지도를 미리 생성
+            var map = new daum.maps.Map(mapContainer, mapOption);
+            //주소-좌표 변환 객체를 생성
+            var geocoder = new daum.maps.services.Geocoder();
+            //마커를 미리 생성
+            var marker = new daum.maps.Marker({
+                position: new daum.maps.LatLng(37.537187, 127.005476),
+                map: map
+            });
+
+            var gu;
+            var dong;
+
+
+            function execDaumPostcode() {
+                new daum.Postcode({
+                    oncomplete: function(data) {
+                        var addr = data.address; // 최종 주소 변수
+                        gu = data.gu;
+                        dong = data.dong;
+
+                        // 주소 정보를 해당 필드에 넣는다.
+                        document.getElementById("address").value = addr;
+                        document.getElementById("addr_gu").value = gu;
+                        document.getElementById("addr_dong").value = dong;
+                        // 주소로 상세 정보를 검색
+                        geocoder.addressSearch(data.address, function(results, status) {
+                            // 정상적으로 검색이 완료됐으면
+                            if (status === daum.maps.services.Status.OK) {
+
+                                var result = results[0]; //첫번째 결과의 값을 활용
+
+                                // 해당 주소에 대한 좌표를 받아서
+                                var coords = new daum.maps.LatLng(result.y, result.x);
+                                // 지도를 보여준다.
+                                mapContainer.style.display = "block";
+                                map.relayout();
+                                // 지도 중심을 변경한다.
+                                map.setCenter(coords);
+                                // 마커를 결과값으로 받은 위치로 옮긴다.
+                                marker.setPosition(coords)
+                            }
+                        });
+                    }
+                }).open();
+            }
+            </script>
+            
+        </div>
+        <div class="item">
+            <div class="title">2. 거래 유형</div><br>
+                <!--
+                <input type="radio" name="rent_type" value=1 onclick="renttype_clicked(this)" required>양도<br>
+                <input type="radio" name="rent_type" value=2 onclick="renttype_clicked(this)" required>장기대여<br>
+                <div id="roommate" style="display:inline;">
+                <input type="radio" name="rent_type" value=3 onclick="renttype_clicked(this)" required>룸메이트 
+                <div id="roommate_append" hidden>fgdhgdh</div></div>
+                -->
+                
+                <input type="radio" id="rent_type1" name="rent_type" value=1 required>양도<br>
+                <input type="radio" id="rent_type2" name="rent_type" value=2 required>장기대여<br>
+                <input type="radio" id="rent_type3" name="rent_type" value=3 required>룸메이트 
+                <div id="roommate_append" hidden></div>
+                <script>
+                    document.getElementById("rent_type1").addEventListener("click", function(){func();}, false);
+                    document.getElementById("rent_type2").addEventListener("click", function(){func();}, false);
+                    document.getElementById("rent_type3").addEventListener("click", function(){func();}, false);
+                </script>
+                
+
+        </div>
+        <div class="item">
+            <div class="title">3.집 정보</div><br>
+            <div>주거 유형</div><br>
+            <!--
+            <input type="hidden" id="building_type" name="building_type" required/>
+            <button type="button" id="building_type_option" value=1 onclick="button_clicked(this)">아파트</button>
+            <button type="button" id="building_type_option" value=2 onclick="button_clicked(this)">오피스텔</button>
+            <button type="button" id="building_type_option" value=3 onclick="button_clicked(this)">빌라</button>
+            -->
+            <input type="hidden" id="building_type" value=0 name="building_type" required/>
+            <button type="button" id="building_type_option1" value=1>아파트</button>
+            <button type="button" id="building_type_option2" value=2>오피스텔</button>
+            <button type="button" id="building_type_option3" value=3>빌라</button>
+            <script>
+                document.getElementById("building_type_option1").addEventListener("click", function(){button_clicked();}, false);
+                document.getElementById("building_type_option2").addEventListener("click", function(){button_clicked();}, false);
+                document.getElementById("building_type_option3").addEventListener("click", function(){button_clicked();}, false);
+            </script>
+            <div>방개수</div><br>
+            <select name="room_num" required>
+                <option value=1>1개(원룸)</option>
+                <option value=2>2개</option>
+                <option value=3>3개</option>
+                <option value=4>4개 이상</option>
+            </select>
+            <div>옵션</div><br>
+            <input type="checkbox" name="options" value="wifi">무선 인터넷<br>
+            <input type="checkbox" name="options" value="air_conditioner">에어컨<br>
+            <input type="checkbox" name="options" value="tv">TV<br>
+            <input type="checkbox" name="options" value="doorlock">도어락<br>
+            <input type="checkbox" name="options" value="washer">세탁기<br>
+            <input type="checkbox" name="options" value="induction">인덕션<br>
+            <input type="checkbox" name="options" value="closet">옷장<br>
+            <input type="checkbox" name="options" value="desk">책상<br>
+            <input type="checkbox" name="options" value="bed">침대<br>
+            <input type="checkbox" name="options" value="duplex">복층<br>
+        </div>
+        <br><br>
+        <button class="btn bnt-action" type="submit" value="다음">다음</button>
+    </form>
+</div>
+</body>
+<script>
+        var flag = false;
+
+        function func(){
+            alert("함수 시작");
+            //var x = document.getElementById(this.id);
+            switch(this.value){
+                case 1: case 2:
+                    if(!flag)){              // flag가 true이면(=select tag 있는 상태면)
+                        var cell = document.getElementById("roommate_append");
+                        while(cell.hasChildNodes()){
+                           cell.removeChild(cell.firstChild);
+                        }
+                       // document.getElementById("roommate_num").removeChild()
+                    }
+                    break;
+                case 3:
+                    if(!flag){              // flag가 false이면(=select tag 없는 상태면)
+                        var tmp = document.getElementById("roommate_append")
+                        var str = '';
+                        str += '<select id="roommate_num" name="rommate_num">';
+                        str += '    <option value=1>1명</option>';
+                        str += '    <option value=2>2명</option>';
+                        str += '    <option value=3>3명</option>';
+                        str += '    <option value=4>4명</option>';
+                        str += '    <option value=5>5명</option>';
+                        str += '</select>';
+                        tmp.innerHTML += str;
+
+                        flag = true;        // select tag 생겨있는 상태(true)
+                    }
+                    break;
+            }          
+        }
+</script>
+<script>
+        function button_clicked(){
+            alert("함수시작");
+                    var el = document.getElementById("building_type");
+                    //var x=document.getElementById(a.id);
+                    switch(this.value){
+                        case 1:
+                            el.setAttribute("value", 1);
+                            break;             // building_type = 1
+                        case 2:
+                            el.setAttribute("value", 2);
+                            break;
+                        case 3:
+                            el.setAttribute("value", 3);
+                            break;
+
+                    }
+                }
+</script>
+
+<footer>
+    <!--푸터 만들기-->
+</footer>
+</html>
+{% endblock %}

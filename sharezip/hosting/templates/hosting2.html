@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <!-- 스타일 태그 부분은 별도의 css 파일로 나중에 옮겨주기! -->
+    <style>
+        button{
+            cursor: pointer;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="jquery.min.js" charset="euc-kr"></script>
+
+
+    <title>Document</title>
+</head>
+<body>
+    <form method="post" action="{% url 'create2' %}">{% csrf_token %}
+        <input type="hidden" name="room_obj" value="{{current_room}}">
+        <div class="item">
+            <div class="title">4. 사진</div><br>
+            <!--<img id="img1" src="..." class="card-img-top" alt="...">image/gif, image/jpeg, image/png"/>-->
+            <!--<input type="file" id="input_file" /><br />-->
+            <div class="card" style="width: 18rem;">
+                <img id="thumb1" name="thumb1" class="card-img-top" alt="Photo">
+                <div class="card-body">
+                <h5 class="card-title">사진 업로드</h5>
+                <pre class="brush:html">
+                <input type="file" class="form-control-file" id="exampleFormControlFile1" onchange="LoadImg(this);">
+             </div>
+              </div>
+              <div class="card" style="width: 18rem;">
+                    <img id="thumb2" name="thumb2" class="card-img-top" alt="Photo">
+                    <div class="card-body">
+                    <h5 class="card-title">사진 업로드</h5>
+                    <pre class="brush:html">
+                    <input type="file" class="form-control-file" id="exampleFormControlFile2" onchange="LoadImg(this);">
+                 </div>
+            </div>
+            <div class="card" style="width: 18rem;">
+                <img id="thumb3" name="thumb3" class="card-img-top" alt="Photo">
+                <div class="card-body">
+                <h5 class="card-title">사진 업로드</h5>
+                <pre class="brush:html">
+                <input type="file" class="form-control-file" id="exampleFormControlFile3" onchange="LoadImg(this);">
+             </div>
+              </div>
+              
+        
+        </div>
+        <div class="item">
+            <div class="title">5. 세부 소개</div><br>
+            <input type="text" name="details" cols=300 rows=100/><br>
+        </div>
+        <div class="item">
+                <div class="title">금액</div>
+                <input type="text" id="cost" name="cost"/>원<br>
+            </div>
+            <div class="item">
+                <div class="title">기간</div>
+                <input type="date" name="start_date"/><input type="date" name="end_date"/><br>
+           
+ </div>
+        <br><br>
+        <button class="btn bnt-action" type="submit" value="upload">올리기</button>
+    </form>
+</body>
+<script type="text/javascript">
+    function LoadImg(value){
+        if(value.files && value.files[0]){
+            var reader = new FileReader();
+            reader.onload = function(e){
+                $('#thumb1').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(value.file[0]);
+        }
+    }
+</script>
+<footer>
+    <!--푸터 만들기-->
+</footer>
+</html>
